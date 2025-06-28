@@ -6,8 +6,8 @@ from django.urls import reverse
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250, unique=True)
+    name = models.CharField(max_length=250, verbose_name='نام دسته بندی')
+    slug = models.SlugField(max_length=250, unique=True, verbose_name='اسلاگ')
 
     class Meta:
         ordering = ['name']
@@ -16,6 +16,9 @@ class Category(models.Model):
         ]
         verbose_name = 'دسته بندی'
         verbose_name_plural = 'دسته بندی ها'
+
+    def get_absolute_url(self):
+        return reverse('store:product_list_by_category', args=[self.slug])
 
     def __str__(self):
         return self.name
@@ -43,6 +46,9 @@ class Product(models.Model):
         ]
         verbose_name = 'محصول'
         verbose_name_plural = 'محصولات'
+
+    def get_absolute_url(self):
+        return reverse('store:product_detail', args=[self.id, self.slug])
 
     def __str__(self):
         return self.name
