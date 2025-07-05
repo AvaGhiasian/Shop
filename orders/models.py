@@ -1,11 +1,15 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 from store.models import Product
+from account.models import StoreUser
 
 
 # Create your models here.
 
 class Order(models.Model):
+    buyer = models.ForeignKey(StoreUser, on_delete=models.SET_NULL, related_name='orders', null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()

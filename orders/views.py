@@ -1,18 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import PhoneVerificationForm, OrderCreateForm
-from account.models import StoreUser
-from .models import OrderItem, Order
-from cart.cart import Cart
-import random
 from cart.common.KaveSms import send_sms_with_template
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.shortcuts import redirect
 from django.http import HttpResponse
+from account.models import StoreUser
+from cart.cart import Cart
 import requests
+import random
 import json
+
+from .models import OrderItem, Order
+from .forms import PhoneVerificationForm, OrderCreateForm
 
 
 def verify_phone(request):
@@ -50,9 +51,26 @@ def verify_code(request):
                 login(request, user)
                 del request.session['verification_code']
                 del request.session['phone']
-                return redirect('store:product_detail')
+                return redirect('orders:order_create')
             else:
                 messages.error(request, 'verification code failed.')
     return render(request, 'verify_code.html')
 
 
+@login_required
+def order_create(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        form = OrderCreateForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.buyer = request.user
+            order.save()
+            for item in cart:
+                OrderItem.objects.create(order=order, product=item['product'], price=item['price'],
+                                         quantity=item['quantity'], weight=item['weight'])
+
+            return redirect('store:product_list')
+    else:
+        form = OrderCreateForm()
+    return render(request, 'order_create.html', {'form': form, 'cart': cart})
