@@ -3,6 +3,7 @@ from django.views.decorators.http import require_POST
 from store.models import Product
 from .cart import Cart
 from django.http import JsonResponse
+from .common.KaveSms import send_sms_normal, send_sms_with_template
 
 
 # Create your views here.
@@ -28,6 +29,7 @@ def add_to_cart(request, product_id):
             'total_price': cart.get_total_price(),
             'cart_count': count,
         }
+        send_sms_normal('09912975826','محصول به سبد خرید اضافه شد')
         return JsonResponse(context)
     except:
         return JsonResponse({"error": "Invalid request."})
@@ -54,6 +56,7 @@ def update_quantity(request):
             'item_count': len(cart),
             'total_price': cart.get_total_price(),
             'quantity': cart.cart[item_id]['quantity'],
+            # 'price': cart.cart[item_id]['price'],
             'total': cart.cart[item_id]['quantity'] * cart.cart[item_id]['price'],
             'final_price': cart.get_final_price(),
             'success': True,
@@ -66,6 +69,7 @@ def update_quantity(request):
 @require_POST
 def remove_item(request):
     item_id = request.POST.get('item_id')
+    print(item_id)
     try:
         product = get_object_or_404(Product, id=item_id)
         cart = Cart(request)
