@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics, views
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 from store.models import Product
 from account.models import StoreUser
@@ -21,6 +23,9 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
 
 class StoreUserListAPIView(views.APIView):
+    permission_classes = [IsAuthenticated] # سطح دسترسی به api ها را  نشان میدهد
+    authentication_classes = [BasicAuthentication]  # username and pass is needed only, نوع احراز هویت را نشان میدهد
+
     def get(self, request, *args, **kwargs):
         users = StoreUser.objects.all()
         serializer = StoreUserSerializer(users, many=True)
