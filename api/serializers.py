@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from store.models import Product, ProductFeature
 from account.models import StoreUser
+from orders.models import Order
 
 
 class ProductFeatureSerializer(serializers.ModelSerializer):
