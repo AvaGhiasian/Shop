@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 from store.models import Product
 from account.models import StoreUser
-from .serializers import ProductSerializer, StoreUserSerializer
+from .serializers import ProductSerializer, StoreUserSerializer, UserRegistrationSerializer
 
 
 # Create your views here.
@@ -23,10 +23,16 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
 
 class StoreUserListAPIView(views.APIView):
-    permission_classes = [IsAuthenticated] # سطح دسترسی به api ها را  نشان میدهد
+    permission_classes = [IsAuthenticated]  # سطح دسترسی به api ها را  نشان میدهد
     authentication_classes = [BasicAuthentication]  # username and pass is needed only, نوع احراز هویت را نشان میدهد
 
     def get(self, request, *args, **kwargs):
         users = StoreUser.objects.all()
         serializer = StoreUserSerializer(users, many=True)
         return Response(serializer.data)
+
+
+class UserRegistrationAPIView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = StoreUser.objects.all()
+    serializer_class = UserRegistrationSerializer
