@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, views
+from rest_framework import generics, views, viewsets
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
@@ -12,14 +12,15 @@ from .serializers import ProductSerializer, StoreUserSerializer, UserRegistratio
 # Create your views here.
 
 
-class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-class ProductDetailAPIView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# we have product view set so we don't need these :)
+# class ProductListAPIView(generics.ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#
+#
+# class ProductDetailAPIView(generics.RetrieveAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
 
 class StoreUserListAPIView(views.APIView):
@@ -36,3 +37,8 @@ class UserRegistrationAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     queryset = StoreUser.objects.all()
     serializer_class = UserRegistrationSerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
