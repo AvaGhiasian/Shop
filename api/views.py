@@ -5,9 +5,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 
+from orders.models import Order
 from store.models import Product
 from account.models import StoreUser
-from .serializers import ProductSerializer, StoreUserSerializer, UserRegistrationSerializer
+from .serializers import ProductSerializer, StoreUserSerializer, UserRegistrationSerializer, OrderSerializer
+from .permissions import IsAdminIsfahan, IsBuyer
 
 
 # Create your views here.
@@ -55,3 +57,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         products = self.queryset.filter(off__gt=0)
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
+
+
+class OrderListAPIView(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAdminIsfahan]
+
+
+class OrderDetailAPIView(generics.RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsBuyer]

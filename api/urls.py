@@ -12,5 +12,7 @@ urlpatterns = [
     # path('product/<pk>', views.ProductDetailAPIView.as_view(), name='product_detail_api'),
     path('users/', views.StoreUserListAPIView.as_view(), name='users_list_api'),
     path('register/', views.UserRegistrationAPIView.as_view(), name='register_api'),
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('orders/', views.OrderListAPIView.as_view(), name='orders_list_api'),
+    path('orders/<int:pk>/', views.OrderDetailAPIView.as_view(), name='order_detail_api'),
 ]
